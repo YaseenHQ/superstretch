@@ -65,7 +65,7 @@ public class PreviewApiTest {
     @Test
     public void isPreviewWarningEnabledTest() throws ApiException {
         String sandboxId = null;
-        BigDecimal port = null;
+        Integer port = null;
         PreviewWarning response = api.isPreviewWarningEnabled(sandboxId, port);
         // TODO: test validations
     }

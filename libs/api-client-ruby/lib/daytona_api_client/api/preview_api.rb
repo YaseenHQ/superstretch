@@ -150,7 +150,7 @@ module DaytonaApiClient
     # Check if the preview warning page is enabled for the sandbox
     # @param sandbox_id [String] ID of the sandbox, or a signed preview URL token (requires the port query param)
     # @param [Hash] opts the optional parameters
-    # @option opts [Float] :port Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
+    # @option opts [Integer] :port Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
     # @return [PreviewWarning]
     def is_preview_warning_enabled(sandbox_id, opts = {})
       data, _status_code, _headers = is_preview_warning_enabled_with_http_info(sandbox_id, opts)
@@ -160,7 +160,7 @@ module DaytonaApiClient
     # Check if the preview warning page is enabled for the sandbox
     # @param sandbox_id [String] ID of the sandbox, or a signed preview URL token (requires the port query param)
     # @param [Hash] opts the optional parameters
-    # @option opts [Float] :port Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
+    # @option opts [Integer] :port Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
     # @return [Array<(PreviewWarning, Integer, Hash)>] PreviewWarning data, response status code and response headers
     def is_preview_warning_enabled_with_http_info(sandbox_id, opts = {})
       if @api_client.config.debugging
@@ -170,6 +170,14 @@ module DaytonaApiClient
       if @api_client.config.client_side_validation && sandbox_id.nil?
         fail ArgumentError, "Missing the required parameter 'sandbox_id' when calling PreviewApi.is_preview_warning_enabled"
       end
+      if @api_client.config.client_side_validation && !opts[:'port'].nil? && opts[:'port'] > 65535
+        fail ArgumentError, 'invalid value for "opts[:"port"]" when calling PreviewApi.is_preview_warning_enabled, must be smaller than or equal to 65535.'
+      end
+
+      if @api_client.config.client_side_validation && !opts[:'port'].nil? && opts[:'port'] < 1
+        fail ArgumentError, 'invalid value for "opts[:"port"]" when calling PreviewApi.is_preview_warning_enabled, must be greater than or equal to 1.'
+      end
+
       # resource path
       local_var_path = '/preview/{sandboxId}/preview-warning'.sub('{' + 'sandboxId' + '}', CGI.escape(sandbox_id.to_s))
 

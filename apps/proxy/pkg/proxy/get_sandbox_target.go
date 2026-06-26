@@ -218,8 +218,8 @@ func (p *Proxy) getSandboxPreviewWarningEnabled(ctx context.Context, sandboxIdOr
 	enabled := true
 	err = utils.RetryWithExponentialBackoff(ctx, "getSandboxPreviewWarningEnabled", proxyMaxRetries, proxyBaseDelay, proxyMaxDelay, func() error {
 		req := p.apiclient.PreviewAPI.IsPreviewWarningEnabled(ctx, sandboxIdOrToken)
-		if portFloat, parseErr := strconv.ParseFloat(port, 32); parseErr == nil {
-			req = req.Port(float32(portFloat))
+		if portInt, parseErr := strconv.ParseInt(port, 10, 32); parseErr == nil {
+			req = req.Port(int32(portInt))
 		}
 		result, res, err := req.Execute()
 		if err == nil {

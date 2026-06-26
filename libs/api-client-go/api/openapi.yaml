@@ -7250,7 +7250,9 @@ paths:
         name: port
         required: false
         schema:
-          type: number
+          maximum: 65535
+          minimum: 1
+          type: integer
         style: form
       responses:
         "200":

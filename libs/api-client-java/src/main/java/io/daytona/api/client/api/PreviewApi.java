@@ -351,7 +351,7 @@ public class PreviewApi {
         <tr><td> 200 </td><td> Whether the preview warning page is enabled for the sandbox </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call isPreviewWarningEnabledCall(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable BigDecimal port, final ApiCallback _callback) throws ApiException {
+    public okhttp3.Call isPreviewWarningEnabledCall(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable Integer port, final ApiCallback _callback) throws ApiException {
         String basePath = null;
         // Operation Servers
         String[] localBasePaths = new String[] {  };
@@ -401,7 +401,7 @@ public class PreviewApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private okhttp3.Call isPreviewWarningEnabledValidateBeforeCall(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable BigDecimal port, final ApiCallback _callback) throws ApiException {
+    private okhttp3.Call isPreviewWarningEnabledValidateBeforeCall(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable Integer port, final ApiCallback _callback) throws ApiException {
         // verify the required parameter 'sandboxId' is set
         if (sandboxId == null) {
             throw new ApiException("Missing the required parameter 'sandboxId' when calling isPreviewWarningEnabled(Async)");
@@ -425,7 +425,7 @@ public class PreviewApi {
         <tr><td> 200 </td><td> Whether the preview warning page is enabled for the sandbox </td><td>  -  </td></tr>
      </table>
      */
-    public PreviewWarning isPreviewWarningEnabled(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable BigDecimal port) throws ApiException {
+    public PreviewWarning isPreviewWarningEnabled(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable Integer port) throws ApiException {
         ApiResponse<PreviewWarning> localVarResp = isPreviewWarningEnabledWithHttpInfo(sandboxId, port);
         return localVarResp.getData();
     }
@@ -444,7 +444,7 @@ public class PreviewApi {
         <tr><td> 200 </td><td> Whether the preview warning page is enabled for the sandbox </td><td>  -  </td></tr>
      </table>
      */
-    public ApiResponse<PreviewWarning> isPreviewWarningEnabledWithHttpInfo(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable BigDecimal port) throws ApiException {
+    public ApiResponse<PreviewWarning> isPreviewWarningEnabledWithHttpInfo(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable Integer port) throws ApiException {
         okhttp3.Call localVarCall = isPreviewWarningEnabledValidateBeforeCall(sandboxId, port, null);
         Type localVarReturnType = new TypeToken<PreviewWarning>(){}.getType();
         return localVarApiClient.execute(localVarCall, localVarReturnType);
@@ -465,7 +465,7 @@ public class PreviewApi {
         <tr><td> 200 </td><td> Whether the preview warning page is enabled for the sandbox </td><td>  -  </td></tr>
      </table>
      */
-    public okhttp3.Call isPreviewWarningEnabledAsync(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable BigDecimal port, final ApiCallback<PreviewWarning> _callback) throws ApiException {
+    public okhttp3.Call isPreviewWarningEnabledAsync(@javax.annotation.Nonnull String sandboxId, @javax.annotation.Nullable Integer port, final ApiCallback<PreviewWarning> _callback) throws ApiException {
 
         okhttp3.Call localVarCall = isPreviewWarningEnabledValidateBeforeCall(sandboxId, port, _callback);
         Type localVarReturnType = new TypeToken<PreviewWarning>(){}.getType();

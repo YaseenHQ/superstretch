@@ -304,11 +304,11 @@ type PreviewAPIIsPreviewWarningEnabledRequest struct {
 	ctx context.Context
 	ApiService PreviewAPI
 	sandboxId string
-	port *float32
+	port *int32
 }
 
 // Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
-func (r PreviewAPIIsPreviewWarningEnabledRequest) Port(port float32) PreviewAPIIsPreviewWarningEnabledRequest {
+func (r PreviewAPIIsPreviewWarningEnabledRequest) Port(port int32) PreviewAPIIsPreviewWarningEnabledRequest {
 	r.port = &port
 	return r
 }

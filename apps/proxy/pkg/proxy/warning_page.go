@@ -146,7 +146,11 @@ func (p *Proxy) browserWarningMiddleware() gin.HandlerFunc {
 		if sandboxIdOrSignedToken != "" {
 			enabled, err := p.getSandboxPreviewWarningEnabled(ctx.Request.Context(), sandboxIdOrSignedToken, targetPort)
 			if err != nil {
-				log.Errorf("Failed to get sandbox preview warning status: %v", err)
+				// The error can embed the request URL, which carries the signed
+				// preview token; redact it before logging so the token never
+				// lands in logs.
+				sanitized := strings.ReplaceAll(err.Error(), sandboxIdOrSignedToken, "[redacted]")
+				log.Errorf("Failed to get sandbox preview warning status: %s", sanitized)
 			} else if !enabled {
 				ctx.Next()
 				return

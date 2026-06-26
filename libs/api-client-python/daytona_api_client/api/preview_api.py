@@ -576,7 +576,7 @@ class PreviewApi:
     def is_preview_warning_enabled(
         self,
         sandbox_id: Annotated[StrictStr, Field(description="ID of the sandbox, or a signed preview URL token (requires the port query param)")],
-        port: Annotated[Optional[Union[StrictFloat, StrictInt]], Field(description="Port the signed preview URL token was issued for. Required when sandboxId is a signed token.")] = None,
+        port: Annotated[Optional[Annotated[int, Field(le=65535, strict=True, ge=1)]], Field(description="Port the signed preview URL token was issued for. Required when sandboxId is a signed token.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -596,7 +596,7 @@ class PreviewApi:
         :param sandbox_id: ID of the sandbox, or a signed preview URL token (requires the port query param) (required)
         :type sandbox_id: str
         :param port: Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
-        :type port: float
+        :type port: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -646,7 +646,7 @@ class PreviewApi:
     def is_preview_warning_enabled_with_http_info(
         self,
         sandbox_id: Annotated[StrictStr, Field(description="ID of the sandbox, or a signed preview URL token (requires the port query param)")],
-        port: Annotated[Optional[Union[StrictFloat, StrictInt]], Field(description="Port the signed preview URL token was issued for. Required when sandboxId is a signed token.")] = None,
+        port: Annotated[Optional[Annotated[int, Field(le=65535, strict=True, ge=1)]], Field(description="Port the signed preview URL token was issued for. Required when sandboxId is a signed token.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -666,7 +666,7 @@ class PreviewApi:
         :param sandbox_id: ID of the sandbox, or a signed preview URL token (requires the port query param) (required)
         :type sandbox_id: str
         :param port: Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
-        :type port: float
+        :type port: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -716,7 +716,7 @@ class PreviewApi:
     def is_preview_warning_enabled_without_preload_content(
         self,
         sandbox_id: Annotated[StrictStr, Field(description="ID of the sandbox, or a signed preview URL token (requires the port query param)")],
-        port: Annotated[Optional[Union[StrictFloat, StrictInt]], Field(description="Port the signed preview URL token was issued for. Required when sandboxId is a signed token.")] = None,
+        port: Annotated[Optional[Annotated[int, Field(le=65535, strict=True, ge=1)]], Field(description="Port the signed preview URL token was issued for. Required when sandboxId is a signed token.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -736,7 +736,7 @@ class PreviewApi:
         :param sandbox_id: ID of the sandbox, or a signed preview URL token (requires the port query param) (required)
         :type sandbox_id: str
         :param port: Port the signed preview URL token was issued for. Required when sandboxId is a signed token.
-        :type port: float
+        :type port: int
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of

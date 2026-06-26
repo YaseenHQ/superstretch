@@ -4,7 +4,6 @@
 package proxy
 
 import (
-	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"strings"
@@ -150,13 +149,15 @@ func TestHandleAcceptProxyWarning_AllowsSameHostAbsoluteRedirect(t *testing.T) {
 
 	handleAcceptProxyWarning(c, true)
 
-	// gin's ResponseWriter buffers the status; http.Redirect writes no body for
-	// POST, so assert the buffered status rather than the recorder's Code.
-	if c.Writer.Status() != http.StatusFound {
-		t.Fatalf("expected 302 Found; got %d", c.Writer.Status())
+	target := "https://3000-abc.daytonaproxy01.net/dashboard/index.html"
+	if w.Code != 200 {
+		t.Fatalf("expected 200 so the form submission completes on this origin; got %d", w.Code)
 	}
-	if loc := w.Header().Get("Location"); loc != "https://3000-abc.daytonaproxy01.net/dashboard/index.html" {
-		t.Fatalf("expected same-host redirect to be honored; got Location %q", loc)
+	if loc := w.Header().Get("Location"); loc != "" {
+		t.Fatalf("expected no HTTP redirect; got Location %q", loc)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `http-equiv="refresh"`) || !strings.Contains(body, target) {
+		t.Fatalf("expected meta refresh to same-host target %q; got:\n%s", target, body)
 	}
 }
 
@@ -174,13 +175,15 @@ func TestHandleAcceptProxyWarning_AllowsSameHostWithPortAndQuery(t *testing.T) {
 
 	handleAcceptProxyWarning(c, false)
 
-	// gin's ResponseWriter buffers the status; http.Redirect writes no body for
-	// POST, so assert the buffered status rather than the recorder's Code.
-	if c.Writer.Status() != http.StatusFound {
-		t.Fatalf("expected 302 Found; got %d", c.Writer.Status())
+	target := "http://localhost:8080/dashboard?tab=logs"
+	if w.Code != 200 {
+		t.Fatalf("expected 200 so the form submission completes on this origin; got %d", w.Code)
 	}
-	if loc := w.Header().Get("Location"); loc != "http://localhost:8080/dashboard?tab=logs" {
-		t.Fatalf("expected same-host:port redirect to be honored; got Location %q", loc)
+	if loc := w.Header().Get("Location"); loc != "" {
+		t.Fatalf("expected no HTTP redirect; got Location %q", loc)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `http-equiv="refresh"`) || !strings.Contains(body, target) {
+		t.Fatalf("expected meta refresh to same-host:port target %q; got:\n%s", target, body)
 	}
 }
 
@@ -200,8 +203,12 @@ func TestHandleAcceptProxyWarning_AllowsSameHostWithForwardedHostHeader(t *testi
 
 	handleAcceptProxyWarning(c, true)
 
-	if loc := w.Header().Get("Location"); loc != "https://3000-abc.daytonaproxy01.net/app" {
-		t.Fatalf("expected redirect to be unaffected by X-Forwarded-Host; got Location %q", loc)
+	target := "https://3000-abc.daytonaproxy01.net/app"
+	if loc := w.Header().Get("Location"); loc != "" {
+		t.Fatalf("expected no HTTP redirect; got Location %q", loc)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `http-equiv="refresh"`) || !strings.Contains(body, target) {
+		t.Fatalf("expected meta refresh unaffected by X-Forwarded-Host, target %q; got:\n%s", target, body)
 	}
 }
 
@@ -213,8 +220,11 @@ func TestHandleAcceptProxyWarning_AllowsSafeRelativePath(t *testing.T) {
 
 	handleAcceptProxyWarning(c, true)
 
-	if loc := w.Header().Get("Location"); loc != "/dashboard" {
-		t.Fatalf("expected safe relative path to be honored; got Location %q", loc)
+	if loc := w.Header().Get("Location"); loc != "" {
+		t.Fatalf("expected no HTTP redirect; got Location %q", loc)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `content="0; url=/dashboard"`) {
+		t.Fatalf("expected meta refresh to safe relative path /dashboard; got:\n%s", body)
 	}
 }
 
@@ -245,8 +255,11 @@ func TestHandleAcceptProxyWarning_RejectsOpenRedirectTargets(t *testing.T) {
 
 			handleAcceptProxyWarning(c, true)
 
-			if loc := w.Header().Get("Location"); loc != "/" {
-				t.Fatalf("expected unsafe redirect %q to fall back to \"/\"; got Location %q", tc.redirect, loc)
+			if loc := w.Header().Get("Location"); loc != "" {
+				t.Fatalf("expected no HTTP redirect; got Location %q", loc)
+			}
+			if body := w.Body.String(); !strings.Contains(body, `content="0; url=/"`) {
+				t.Fatalf("expected unsafe redirect %q to fall back to \"/\" via meta refresh; got:\n%s", tc.redirect, body)
 			}
 		})
 	}
@@ -260,7 +273,10 @@ func TestHandleAcceptProxyWarning_EmptyRedirectFallsBackToRoot(t *testing.T) {
 
 	handleAcceptProxyWarning(c, true)
 
-	if loc := w.Header().Get("Location"); loc != "/" {
-		t.Fatalf("expected empty redirect to fall back to \"/\"; got Location %q", loc)
+	if loc := w.Header().Get("Location"); loc != "" {
+		t.Fatalf("expected no HTTP redirect; got Location %q", loc)
+	}
+	if body := w.Body.String(); !strings.Contains(body, `content="0; url=/"`) {
+		t.Fatalf("expected empty redirect to fall back to \"/\" via meta refresh; got:\n%s", body)
 	}
 }

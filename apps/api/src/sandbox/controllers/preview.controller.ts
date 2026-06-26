@@ -4,7 +4,7 @@
  */
 
 import Redis from 'ioredis'
-import { Controller, Get, Param, Query, Logger, NotFoundException, Req, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, ParseIntPipe, Query, Logger, NotFoundException, Req, UseGuards } from '@nestjs/common'
 import { SandboxService } from '../services/sandbox.service'
 import { ApiResponse, ApiOperation, ApiParam, ApiQuery, ApiTags, ApiOAuth2, ApiBearerAuth } from '@nestjs/swagger'
 import { InjectRedis } from '@nestjs-modules/ioredis'
@@ -92,7 +92,9 @@ export class PreviewController {
   @ApiQuery({
     name: 'port',
     description: 'Port the signed preview URL token was issued for. Required when sandboxId is a signed token.',
-    type: 'number',
+    type: 'integer',
+    minimum: 1,
+    maximum: 65535,
     required: false,
   })
   @ApiResponse({
@@ -104,18 +106,30 @@ export class PreviewController {
   @UseGuards(ProxyAuthContextGuard)
   async isPreviewWarningEnabled(
     @Param('sandboxId') sandboxId: string,
-    @Query('port') port?: number,
+    @Query('port', new ParseIntPipe({ optional: true })) port?: number,
   ): Promise<PreviewWarningDto> {
     const cacheKey = `preview:warning:${sandboxId}:${port ?? ''}`
     const cached = await this.redis.get(cacheKey)
     if (cached !== null) {
+      if (cached === '404') {
+        throw new NotFoundException(`Sandbox with ID ${sandboxId} not found`)
+      }
       return { enabled: cached === '1' }
     }
 
-    const enabled = await this.sandboxService.isPreviewWarningEnabled(sandboxId, port)
-    //  cache the result for 60 seconds to avoid unnecessary requests to the database
-    await this.redis.setex(cacheKey, 60, enabled ? '1' : '0')
-    return { enabled }
+    try {
+      const enabled = await this.sandboxService.isPreviewWarningEnabled(sandboxId, port)
+      //  cache the result for 60 seconds to avoid unnecessary requests to the database
+      await this.redis.setex(cacheKey, 60, enabled ? '1' : '0')
+      return { enabled }
+    } catch (ex) {
+      if (ex instanceof NotFoundException) {
+        //  cache the not-found result so repeated misses (deleted sandbox / bad
+        //  token) don't hit the database every time
+        await this.redis.setex(cacheKey, 3, '404')
+      }
+      throw ex
+    }
   }
 
   @Get(':sandboxId/validate/:authToken')
