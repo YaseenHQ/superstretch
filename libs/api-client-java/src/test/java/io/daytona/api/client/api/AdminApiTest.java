@@ -181,6 +181,17 @@ public class AdminApiTest {
     }
 
     /**
+     * Get runners breakdown by region
+     *
+     * @throws ApiException if the Api call fails
+     */
+    @Test
+    public void adminGetRunnersBreakdownByRegionTest() throws ApiException {
+        Map<String, List<String>> response = api.adminGetRunnersBreakdownByRegion();
+        // TODO: test validations
+    }
+
+    /**
      * Get user by ID
      *
      * @throws ApiException if the Api call fails

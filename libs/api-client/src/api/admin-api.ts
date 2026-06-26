@@ -518,6 +518,42 @@ export const AdminApiAxiosParamCreator = function (configuration?: Configuration
         },
         /**
          * 
+         * @summary Get runners breakdown by region
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        adminGetRunnersBreakdownByRegion: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/admin/runners/by-region`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearer required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+            // authentication oauth2 required
+
+            localVarHeaderParameter['Accept'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Get user by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -1198,6 +1234,18 @@ export const AdminApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Get runners breakdown by region
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async adminGetRunnersBreakdownByRegion(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: Array<string>; }>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.adminGetRunnersBreakdownByRegion(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AdminApi.adminGetRunnersBreakdownByRegion']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Get user by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -1490,6 +1538,15 @@ export const AdminApiFactory = function (configuration?: Configuration, basePath
         },
         /**
          * 
+         * @summary Get runners breakdown by region
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        adminGetRunnersBreakdownByRegion(options?: RawAxiosRequestConfig): AxiosPromise<{ [key: string]: Array<string>; }> {
+            return localVarFp.adminGetRunnersBreakdownByRegion(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Get user by ID
          * @param {string} id 
          * @param {*} [options] Override http request option.
@@ -1747,6 +1804,16 @@ export class AdminApi extends BaseAPI {
      */
     public adminGetRunnerById(id: string, options?: RawAxiosRequestConfig) {
         return AdminApiFp(this.configuration).adminGetRunnerById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get runners breakdown by region
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     */
+    public adminGetRunnersBreakdownByRegion(options?: RawAxiosRequestConfig) {
+        return AdminApiFp(this.configuration).adminGetRunnersBreakdownByRegion(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
