@@ -72,6 +72,7 @@ type Proxy struct {
 	runnerCache                    common_cache.ICache[RunnerInfo]
 	sandboxRunnerCache             common_cache.ICache[RunnerInfo]
 	sandboxPublicCache             common_cache.ICache[bool]
+	sandboxPreviewWarningCache     common_cache.ICache[bool]
 	sandboxAuthKeyValidCache       common_cache.ICache[bool]
 	sandboxLastActivityUpdateCache common_cache.ICache[bool]
 }
@@ -111,6 +112,10 @@ func StartProxy(ctx context.Context, config *config.Config) error {
 		if err != nil {
 			return err
 		}
+		proxy.sandboxPreviewWarningCache, err = common_cache.NewRedisCache[bool](config.Redis, "proxy:sandbox-preview-warning:")
+		if err != nil {
+			return err
+		}
 		proxy.sandboxAuthKeyValidCache, err = common_cache.NewRedisCache[bool](config.Redis, "proxy:sandbox-auth-key-valid:")
 		if err != nil {
 			return err
@@ -123,6 +128,7 @@ func StartProxy(ctx context.Context, config *config.Config) error {
 		proxy.sandboxRunnerCache = common_cache.NewMapCache[RunnerInfo](ctx)
 		proxy.runnerCache = common_cache.NewMapCache[RunnerInfo](ctx)
 		proxy.sandboxPublicCache = common_cache.NewMapCache[bool](ctx)
+		proxy.sandboxPreviewWarningCache = common_cache.NewMapCache[bool](ctx)
 		proxy.sandboxAuthKeyValidCache = common_cache.NewMapCache[bool](ctx)
 		proxy.sandboxLastActivityUpdateCache = common_cache.NewMapCache[bool](ctx)
 	}
